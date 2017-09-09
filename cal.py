@@ -1,8 +1,9 @@
 do,mo,fmo,thir=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],{'jan':1,'feb':2,'mar':3,'apr':4,'may':5,'jun':6,'jul':7,'aug':8,'sep':9,'oct':10,'nov':11,'dec':12},['January','February','March','April','May','June','July','August','September','October','November','December'],[4,6,9,11]
-#do=list of days, mo=dict of months, fmo=full name of months, thir=motnhs having 30 days
+#do=list of days, mo=dict of months, fmo=full name of months, thir=months having 30 days
 import time
 from datetime import datetime as dm
 z,time.tzname=time.localtime(),('IST','IST') #timezone
+
 def cal(md,di,yi,*o): #the calendar function, md is month_digit, di is date_input, yi is year_input, *o is an argument which if passed will cause the function to return the day's value
  yil=yi%100 #used for calculation of day
  yc=yil+yil/4 #used for calc
@@ -16,10 +17,10 @@ def cal(md,di,yi,*o): #the calendar function, md is month_digit, di is date_inpu
  if md in thir: co=1 #if month is of 30 days, correction is 1
  elif md==2: co=3-l #if month is february, correction is 3-leap
  if di==0: #if input date is 0:
-  a=[i[:3]+' ' for i in do]+[27*'-'+' '+(4*(ind+1)%28)*' '] #stores Sun Mon Tue... and ------ to a with proper spacing
-  for i in range(31-co): #31-co is number of dates in that motnh
+  a=[i[:3]+' ' for i in do]+[27*'-'+' '+(4*(ind+1)%28)*' '] #stores Sun Mon Tue... and ------ to variable a with proper spacing
+  for i in range(31-co): #31-co is number of days in that month
    if yi==1752 and md==9 and i in range(2,13): continue #drops the days 3-13 from September 1752
-   a.append(' '+str(i+1).zfill(2)+' ') #if not that special case, each date is appended to a with proper spacing
+   a.append(' '+str(i+1).zfill(2)+' ') #if not that special case, each date is appended to the variable a with proper spacing
   s="".join(a) #a is joined into a string and stored to s
   print '%s%s, %s\n'%((11-len(fmo[md-1])/2)*' ',fmo[md-1].upper(),str(yi).zfill(4)) #the month, year is printed with proper spacing
   for t in range(8): print ' '+s.strip()[28*t:28*t+28] #prints the month calendar starting from Sun Mon Tue...
@@ -40,6 +41,7 @@ def cal(md,di,yi,*o): #the calendar function, md is month_digit, di is date_inpu
    if cal(md,di,i,1)==cind: l.append(i) #if the dates in that year and input year are same, that year is appended to l
   print '%s is Day %d of the year %d.\n%s is in Week %d of the year %d.\n%s is %d days from the end of the year %d.'%tu #prints details of a date
   print '%s is a %s in years '%(pd,do[cind])+('%d, '*(len(l)-1))%tuple(l[:-1])+'and '+str(l[-1])+' as well.' #prints same-day-different-year years
+
 def _i(): #input function
  global di,md,yi #finally we will need these three variables from this function
  while 1: #inputting year with error handling
@@ -94,6 +96,7 @@ def _i(): #input function
    break
   print
   if r==1: cal(md,di,yi) #if selected tool is calendar, cal() is called, else the variables di,md,yi will be used for age calculation
+
 def age(): #age calculator and difference in two dates function
  print "Enter starting date or date of birth:"
  _i() #input is called to get di,md,yi
@@ -130,6 +133,7 @@ def age(): #age calculator and difference in two dates function
   else:
    for i in range(g): print "You are %ss old."%(t2[i])
    print "Your age is %s years."%str(a/365.25)[:5]
+
 def m(*x): #menu function, *x is there to save a couple of lines(check last line)
  global r #response variable
  print "\nSelect tool:\n1. Calendar and other details of a date\n2. Difference between two dates (and age calculator)\n3. Exit\n(Enter menu at any input prompt to return here)\n"
