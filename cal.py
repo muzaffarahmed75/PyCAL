@@ -16,6 +16,7 @@ def cal(md,di,yi,*o): #the calendar function, md is month_digit, di is date_inpu
  if o: return ind #if variable o is passed, ind is returned, nothing is printed
  if md in thir: co=1 #if month is of 30 days, correction is 1
  elif md==2: co=3-l #if month is february, correction is 3-leap
+
  if di==0: #if input date is 0:
   a=[i[:3]+' ' for i in do]+[27*'-'+' '+(4*(ind+1)%28)*' '] #stores Sun Mon Tue... and ------ to variable a with proper spacing
   for i in range(31-co): #31-co is number of days in that month
@@ -24,21 +25,24 @@ def cal(md,di,yi,*o): #the calendar function, md is month_digit, di is date_inpu
   s="".join(a) #a is joined into a string and stored to s
   print '%s%s, %s\n'%((11-len(fmo[md-1])/2)*' ',fmo[md-1].upper(),str(yi).zfill(4)) #the month, year is printed with proper spacing
   for t in range(8): print ' '+s.strip()[28*t:28*t+28] #prints the month calendar starting from Sun Mon Tue...
+ 
  else: #if input date is not 0
   if yi==1752 and md==9: #september 1752
    if di>=14: ind,typ=ind+3,'Gregorian' #From 14th, Gregorian was adopted. 11 days dropped so the Day must shift increase by 3.
    if di in range(2,14): typ='The calendars in the US, England and many other contries switched from Julian to Gregorian in the year 1752 on 2 September. The change was suggested because the Julian calendar had too many leap years and hence did not properly reflect the actual time it takes for the Earth to circle once round the Sun. In order to get the calendar back in sync with the vernal equinox, 11 days were dropped from September 1752 (2 to 13), making it unusually short with just 19 days. The given day is what it would be if the Julian was continued.'
+  
   st=int(str(yi).zfill(4)+str(md).zfill(2)+str(di).zfill(2))-int("".join([str(z[i]).zfill(2) for i in range(3)])) #st=Sign_wrt_Today, calculates if given date is the past, present or future
   #st is negative if past, zero if today, and positive if future
   cur=['is','was','will be'][(st<0)+(st>0)*2] #is/was/will be will be chosen according to whether the date is in the past, present or future
   print '%s %s, %s %s a %s. (%s)'%(fmo[md-1],str(di),str(yi).zfill(4),cur,do[ind],typ) #prints the day of the given date
   raw_input('<hit enter for more details>')
+  
   pd,dd,cind,l=fmo[md-1]+' '+str(di),dm(yi,md,di),ind,[] #pd is printable date, dd is date in datetime type, duplicating ind to cind to avoid any conflict and l is an empty list
   dy=abs((dd-dm(yi,1,1)).days) #dy=day of the year-1
   tu=(pd, dy+1, yi, pd, (dy+cal(1,1,yi,1))/7+1, yi, pd, 365-dy-bool(yi%4)or(bool(yi%100^yi%400)), yi)
   #tu is a tuple containing printable date, day of the year, input year, week of the year, input year, printable date, days from the end of the year, year input
   for i in range(yi-15,yi+25): #for years from 15 years ago to 25 years in future
-   if cal(md,di,i,1)==cind: l.append(i) #if the dates in that year and input year are same, that year is appended to l
+    if cal(md,di,i,1)==cind: l.append(i) #if the dates in that year and input year are same, that year is appended to l
   print '%s is Day %d of the year %d.\n%s is in Week %d of the year %d.\n%s is %d days from the end of the year %d.'%tu #prints details of a date
   print '%s is a %s in years '%(pd,do[cind])+('%d, '*(len(l)-1))%tuple(l[:-1])+'and '+str(l[-1])+' as well.' #prints same-day-different-year years
 
@@ -57,11 +61,13 @@ def _i(): #input function
     print "\nEnter a year between 1 and 3999.%s"%(['','(0 for current date)'][r==1])
     continue
   break
+ 
  if yi==0:
   if r==1: #r is the response variable, refer the function m() at the bottom
    print '\nThe current date is %s %s, %s and the time is %s:%s%s %s'%tuple([str(i) for i in [fmo[z[1]-1],z[2],z[0],(z[3]-1)%12+1,z[4],('AM','PM')[z[3]/12],time.tzname[0]]])
    #if input year is 0, the current date and time are printed
    return None
+ 
  while 1: #inputting the month with error handling
   mi=raw_input("Enter month: ")[:3].lower() #month is input and only first 3 characters are taken into consideration
   if not mi: continue
@@ -73,26 +79,28 @@ def _i(): #input function
     continue
    if r==2 and m=='0': continue
   break
+
  try: md=int(mi) #check if md is an integer
  except ValueError: md=mo[mi] #if not, it is surely a month name
  if md==0: #if 0 is input for month
   for zi in range(12): 
    print '_'*30+'\n'
    cal(zi+1,0,yi) #cal is a print function, 12 months are printed
+
  else: #if year input is not 0
   while 1:
    co=int(md in thir+[2])+int(((yi%4)or(bool(yi%100^yi%400) and yi>1753))and(md==2))+int(md==2) #correction variable
    di=raw_input("Enter date: ") #date input with error handling
    if not di: continue
    else:
-    if di.lower()=='menu': m() 
-    try: di=int(di)
-    except ValueError:
-     print '\nEnter a valid date.'
-     continue
-    if di not in range(32-co):
-     print "\nEnter a date between 1 and %s. %s"%(str(31-co),['','(0 for full month)'][r==1])
-     continue
+     if di.lower()=='menu': m() 
+     try: di=int(di)
+     except ValueError:
+       print '\nEnter a valid date.'
+       continue
+     if di not in range(32-co):
+       print "\nEnter a date between 1 and %s. %s"%(str(31-co),['','(0 for full month)'][r==1])
+       continue
    break
   print
   if r==1: cal(md,di,yi) #if selected tool is calendar, cal() is called, else the variables di,md,yi will be used for age calculation
@@ -102,19 +110,20 @@ def age(): #age calculator and difference in two dates function
  _i() #input is called to get di,md,yi
  dl1=(yi,md,di) #they are stored in a tuple dl1(datelist1)
  print 'Do you wish to compare the date to\n1. Today (or)\n2. Another date?'
+
  while 1: #input of response with error handling
   p=raw_input("\nEnter input: ")
   print
   if p.lower()=='menu': m()
   if not p: continue
   else:
-   try: p=int(p)
-   except ValueError:
-    print "Enter an integer."
-    continue
+    try: p=int(p)
+    except ValueError:
+      print "Enter an integer."
+      continue
   if p not in (1,2):
-   print "Enter 1 or 2 as your response."
-   continue
+    print "Enter 1 or 2 as your response."
+    continue
   break
  if p-1: #p==2
   _i() #input function is called again, to get another date
@@ -141,14 +150,14 @@ def m(*x): #menu function, *x is there to save a couple of lines(check last line
   r=raw_input("Enter input: ")
   if not r: continue
   else:
-   print
-   try: r=int(r)
-   except ValueError:
-    print "Enter an integer."
-    continue
+    print
+    try: r=int(r)
+    except ValueError:
+      print "Enter an integer."
+      continue
   if r not in (1,2,3):
-   print "Enter 1, 2 or 3 as your response."
-   continue
+    print "Enter 1, 2 or 3 as your response."
+    continue
   break
  if r==3: quit()
  if r-1: age() #r==2
